@@ -1,6 +1,6 @@
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { Logger, NotFoundException } from '@nestjs/common';
-import { AbstractEntity } from './abstract.schema';
+import { AbstractEntity } from './abstract.entity';
 import {
   EntityManager,
   FindOptionsRelations,
