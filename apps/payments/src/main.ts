@@ -3,7 +3,7 @@ import { PaymentsModule } from './payments.module';
 import { Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
-import { PAYMENTS_SERVICE_NAME } from '@app/common';
+import { PAYMENTS_PACKAGE_NAME } from '@app/common';
 import { join } from 'path';
 
 async function bootstrap() {
@@ -12,7 +12,7 @@ async function bootstrap() {
   app.connectMicroservice({
     transport: Transport.GRPC,
     options: {
-      package: PAYMENTS_SERVICE_NAME,
+      package: PAYMENTS_PACKAGE_NAME,
       protoPath: join(__dirname, '../../../proto/payments.proto'),
       url: configService.getOrThrow('PAYMENTS_GRPC_URL'),
     },

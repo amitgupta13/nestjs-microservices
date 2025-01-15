@@ -3,7 +3,11 @@ import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
-import { LoggerModule, NOTIFICATIONS_SERVICE_NAME } from '@app/common';
+import {
+  LoggerModule,
+  NOTIFICATIONS_PACKAGE_NAME,
+  NOTIFICATIONS_SERVICE_NAME,
+} from '@app/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
@@ -16,7 +20,7 @@ import { join } from 'path';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: NOTIFICATIONS_SERVICE_NAME,
+            package: NOTIFICATIONS_PACKAGE_NAME,
             protoPath: join(__dirname, '../../../proto/notifications.proto'),
             url: configService.getOrThrow('NOTIFICATIONS_GRPC_URL'),
           },
