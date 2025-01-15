@@ -4,9 +4,9 @@ import { ReservationsController } from './reservations.controller';
 import {
   DatabaseModule,
   LoggerModule,
-  AUTH_SERVICE,
-  PAYMENTS_SERVICE,
   HealthModule,
+  AUTH_SERVICE_NAME,
+  PAYMENTS_SERVICE_NAME,
 } from '@app/common';
 import { ReservationsRepository } from './reservations.repository';
 import {
@@ -16,6 +16,7 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -27,24 +28,26 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     LoggerModule,
     ClientsModule.registerAsync([
       {
-        name: AUTH_SERVICE,
+        name: AUTH_SERVICE_NAME,
         inject: [ConfigService],
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
+          transport: Transport.GRPC,
           options: {
-            host: configService.get('AUTH_HOST'),
-            port: configService.get('AUTH_PORT'),
+            package: AUTH_SERVICE_NAME,
+            protoPath: join(__dirname, '../../../proto/auth.proto'),
+            url: configService.getOrThrow('AUTH_GRPC_URL'),
           },
         }),
       },
       {
-        name: PAYMENTS_SERVICE,
+        name: PAYMENTS_SERVICE_NAME,
         inject: [ConfigService],
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
+          transport: Transport.GRPC,
           options: {
-            host: configService.get('PAYMENTS_HOST'),
-            port: configService.get('PAYMENTS_PORT'),
+            package: PAYMENTS_SERVICE_NAME,
+            protoPath: join(__dirname, '../../../proto/payments.proto'),
+            url: configService.getOrThrow('PAYMENTS_GRPC_URL'),
           },
         }),
       },
@@ -54,10 +57,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       validationSchema: Joi.object({
         MONGODB_URI: Joi.string().required(),
         PORT: Joi.number().required(),
-        AUTH_HOST: Joi.string().required(),
-        AUTH_PORT: Joi.number().required(),
-        PAYMENTS_HOST: Joi.string().required(),
-        PAYMENTS_PORT: Joi.number().required(),
       }),
     }),
   ],
