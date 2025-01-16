@@ -39,4 +39,9 @@ export class PaymentsService {
 
     return payment;
   }
+
+  async getPayments() {
+    const payments = await this.stripe.paymentIntents.list();
+    return payments.data;
+  }
 }
